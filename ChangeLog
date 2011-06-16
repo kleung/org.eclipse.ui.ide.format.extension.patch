@@ -1,0 +1,70 @@
+2011-06-16  kleung  <kleung@localhost.localdomain>
+
+	* META-INF/MANIFEST.MF: 
+	* src/org/eclipse/ui/internal/wizards/datatransfer/ArchiveFileExportOperation.java (ArchiveFileExportOperation): 
+	(initialize): 
+	* src/org/eclipse/ui/internal/wizards/datatransfer/DataTransferMessages.java: 
+	* src/org/eclipse/ui/internal/wizards/datatransfer/messages.properties: 
+	* src/org/eclipse/ui/internal/wizards/datatransfer/TarFile.java (TarFile): 
+	(getInputStream): 
+	* src/org/eclipse/ui/internal/wizards/datatransfer/TarFileExporter.java (TarFileExporter): 
+	(finished): 
+	(write): 
+	* src/org/eclipse/ui/internal/wizards/datatransfer/WizardArchiveFileResourceExportPage1.java (WizardArchiveFileResourceExportPage1): 
+	(createOptionsGroupButtons): 
+	(createFileFormatOptions): 
+	(.widgetSelected): 
+	(ensureTargetIsValid): 
+	(executeExportOperation): 
+	(finish): 
+	(getDestinationValue): 
+	(getCompressionExtensionIndex): 
+	(getOutputSuffix): 
+	(handleDestinationBrowseButtonPressed): 
+	(internalSaveWidgetValues): 
+	(restoreWidgetValues): 
+	(validateDestinationGroup): 
+	(setUncompressedTarOption): 
+	(setGzipTarOption): 
+	(setZipOption): 
+	(setBzipTarOption): 
+	(activateTarOptions): 
+	(activateZipOptions): 
+	(getTarExportCode): 
+	* src/org/eclipse/ui/internal/wizards/datatransfer/WizardArchiveFileResourceImportPage1.java (FILE_IMPORT_MASK): 
+	* src/org/eclipse/ui/internal/wizards/datatransfer/WizardProjectsImportPage.java (FILE_IMPORT_MASK): 
+2011-06-14  kleung  <kleung@localhost.localdomain>
+
+	* META-INF/MANIFEST.MF: 
+	* src/org/eclipse/ui/internal/wizards/datatransfer/ArchiveFileExportOperation.java (ArchiveFileExportOperation): 
+	(initialize): 
+	* src/org/eclipse/ui/internal/wizards/datatransfer/DataTransferMessages.java: 
+	* src/org/eclipse/ui/internal/wizards/datatransfer/messages.properties: 
+	* src/org/eclipse/ui/internal/wizards/datatransfer/TarFile.java (TarFile): 
+	(getInputStream): 
+	* src/org/eclipse/ui/internal/wizards/datatransfer/TarFileExporter.java (TarFileExporter): 
+	(finished): 
+	(write): 
+	* src/org/eclipse/ui/internal/wizards/datatransfer/WizardArchiveFileResourceExportPage1.java (WizardArchiveFileResourceExportPage1): 
+	(createOptionsGroupButtons): 
+	(createFileFormatOptions): 
+	(.widgetSelected): 
+	(ensureTargetIsValid): 
+	(executeExportOperation): 
+	(finish): 
+	(getDestinationValue): 
+	(getCompressionExtensionIndex): 
+	(getOutputSuffix): 
+	(handleDestinationBrowseButtonPressed): 
+	(internalSaveWidgetValues): 
+	(restoreWidgetValues): 
+	(validateDestinationGroup): 
+	(setUncompressedTarOption): 
+	(setGzipTarOption): 
+	(setZipOption): 
+	(setBzipTarOption): 
+	(activateTarOptions): 
+	(activateZipOptions): 
+	(getTarExportCode): 
+	* src/org/eclipse/ui/internal/wizards/datatransfer/WizardArchiveFileResourceImportPage1.java (FILE_IMPORT_MASK): 
+	* src/org/eclipse/ui/internal/wizards/datatransfer/WizardProjectsImportPage.java (FILE_IMPORT_MASK): 
