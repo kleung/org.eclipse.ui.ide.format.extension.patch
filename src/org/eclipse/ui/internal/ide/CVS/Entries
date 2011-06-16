@@ -1,0 +1,46 @@
+/AboutInfo.java/1.9/Mon May 25 20:52:04 2009//
+/ChooseWorkspaceData.java/1.22/Wed Mar  4 17:23:31 2009//
+/ChooseWorkspaceDialog.java/1.36/Mon May 25 20:52:04 2009//
+/ChooseWorkspaceWithSettingsDialog.java/1.5/Tue May 22 19:22:12 2007//
+/ContentTypeDecorator.java/1.6/Wed Oct 13 15:02:02 2010//
+/DefaultContributorResourceAdapter.java/1.9/Mon May  8 20:54:09 2006//
+/DialogUtil.java/1.10/Mon May 25 20:52:04 2009//
+/EditorAreaDropAdapter.java/1.13/Wed Nov 14 20:38:07 2007//
+/FeatureSelectionDialog.java/1.12/Mon May  8 20:54:09 2006//
+/IDEInternalPreferences.java/1.25/Wed Feb 24 10:11:33 2010//
+/IDEInternalWorkbenchImages.java/1.23/Fri Oct 15 10:34:52 2010//
+/IDEPreferenceInitializer.java/1.20/Tue Jun  1 19:22:29 2010//
+/IDESelectionConversionService.java/1.6/Mon Mar 24 19:13:35 2008//
+/IDEWorkbenchActivityHelper.java/1.19/Fri Apr 11 17:56:03 2008//
+/IDEWorkbenchErrorHandler.java/1.15/Mon May 25 20:52:04 2009//
+/IDEWorkbenchMessages.java/1.95/Thu Apr 14 10:36:44 2011//
+/IDEWorkbenchPlugin.java/1.53/Tue Nov 16 18:11:40 2010//
+/IIDEHelpContextIds.java/1.15/Wed May 12 14:12:19 2010//
+/IMarkerImageProvider.java/1.6/Fri Mar 16 18:00:48 2007//
+/IURIEditorInputAdapterFactory.java/1.1/Wed Feb 28 19:49:10 2007//
+/LineDelimiterEditor.java/1.9/Thu Dec 23 19:46:10 2010//
+/LinkedResourceDecorator.java/1.13/Wed Jan 20 17:02:29 2010//
+/Policy.java/1.10/Mon Mar 24 19:13:35 2008//
+/ProblemImageProvider.java/1.7/Mon Aug 22 13:39:45 2005//
+/ResourceDragAndDropEditor.java/1.3/Thu May  6 12:56:41 2010//
+/ResourceFilterDecorator.java/1.4/Mon Nov 16 16:34:04 2009//
+/ResourceWorkingSetUpdater.java/1.5/Fri Jan  7 14:55:49 2011//
+/StatusUtil.java/1.13/Mon Mar 24 19:13:35 2008//
+/StringMatcher.java/1.8/Mon May  8 20:54:09 2006//
+/TipsAndTricksAction.java/1.19/Mon May 25 20:52:04 2009//
+/VirtualResourceDecorator.java/1.3/Thu Jan 21 10:39:43 2010//
+/WorkbenchActionBuilder.java/1.129/Thu Oct 14 09:10:12 2010//
+D/actions////
+D/commands////
+D/dialogs////
+D/filesystem////
+D/handlers////
+/messages.properties/1.223/Thu Apr 14 10:36:44 2011//
+D/misc////
+D/model////
+/package.html/1.2/Wed Jun 27 13:57:00 2007//
+D/presentations////
+D/registry////
+D/roles////
+D/undo////
+D/update////
