@@ -172,6 +172,7 @@ public class TarFileExporter implements IFileExporter {
      */
     public void write(IFile resource, String destinationPath)
             throws IOException, CoreException {
+
         TarEntry newEntry = new TarEntry(destinationPath);
         if(resource.getLocalTimeStamp() != IResource.NULL_STAMP) {
         	newEntry.setTime(resource.getLocalTimeStamp() / 1000);

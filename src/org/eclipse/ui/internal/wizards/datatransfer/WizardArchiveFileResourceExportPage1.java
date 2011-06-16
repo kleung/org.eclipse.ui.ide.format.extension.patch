@@ -103,6 +103,7 @@ public class WizardArchiveFileResourceExportPage1 extends
     	Composite left = new Composite(optionsGroup, SWT.NONE);
     	left.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
     	left.setLayout(new GridLayout(1, true));
+
         createFileFormatOptions(left, font);
         
         /*// compress... checkbox
