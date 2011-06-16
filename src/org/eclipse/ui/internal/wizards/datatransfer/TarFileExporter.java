@@ -25,6 +25,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
 
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
+
 /**
  * Exports resources to a .tar.gz file.
  *
@@ -33,7 +35,12 @@ import org.eclipse.core.runtime.CoreException;
 public class TarFileExporter implements IFileExporter {
     private TarOutputStream outputStream;
     private GZIPOutputStream gzipOutputStream;
+    private BZip2CompressorOutputStream bzip2OutputStream;
     
+    public static final int UNCOMPRESSED = 0;
+    public static final int GZIP = 1;
+    public static final int BZIP2 = 2;
+    //public static final int XZ = 3;
 
     /**
      *	Create an instance of this class.
@@ -50,7 +57,46 @@ public class TarFileExporter implements IFileExporter {
     		outputStream = new TarOutputStream(new BufferedOutputStream(new FileOutputStream(filename)));
     	}
     }
-
+    
+	/**
+	 * Create an instance of this class and set the compression mode of the
+	 * exporter.
+	 * 
+	 * Supported modes/parameter values are:<br />
+	 * TarFileExporter.UNCOMPRESSED for uncompressed .tar files<br />
+	 * TarFileExporter.GZIP for Gzip compressed .tar.gz files<br />
+	 * TarFileExporter.BZIP2 for Bzip2 compressed .tar.bz2 files<br />
+	 * 
+	 * @param mode
+	 * @exception java.lang.IllegalArgumentException
+	 * @exception java.io.IOException
+	 */
+	public TarFileExporter(String filename, int compressMode)
+			throws IOException, IllegalArgumentException {
+		switch (compressMode) {
+		case UNCOMPRESSED:
+			outputStream = new TarOutputStream(new BufferedOutputStream(
+					new FileOutputStream(filename)));
+			break;
+		case GZIP:
+			gzipOutputStream = new GZIPOutputStream(new FileOutputStream(
+					filename));
+			outputStream = new TarOutputStream(new BufferedOutputStream(
+					gzipOutputStream));
+			break;
+		case BZIP2:
+			bzip2OutputStream = new BZip2CompressorOutputStream(
+					new FileOutputStream(filename));
+			outputStream = new TarOutputStream(new BufferedOutputStream(
+					bzip2OutputStream));
+			break;
+		// case XZ
+		default:
+			throw new IllegalArgumentException();// TO DO: DEFINE MESSAGE IN THE
+													// UTILITY CLASS!
+		}
+	}
+    
     /**
      *	Do all required cleanup now that we're finished with the
      *	currently-open .tar.gz
@@ -61,6 +107,9 @@ public class TarFileExporter implements IFileExporter {
         outputStream.close();
         if(gzipOutputStream != null) {
         	gzipOutputStream.close();
+        }else if(bzip2OutputStream != null)
+        {
+        	bzip2OutputStream.close();
         }
     }
 
@@ -123,7 +172,6 @@ public class TarFileExporter implements IFileExporter {
      */
     public void write(IFile resource, String destinationPath)
             throws IOException, CoreException {
-
         TarEntry newEntry = new TarEntry(destinationPath);
         if(resource.getLocalTimeStamp() != IResource.NULL_STAMP) {
         	newEntry.setTime(resource.getLocalTimeStamp() / 1000);
@@ -137,4 +185,5 @@ public class TarFileExporter implements IFileExporter {
         }
         write(newEntry, resource);
     }
+    
 }

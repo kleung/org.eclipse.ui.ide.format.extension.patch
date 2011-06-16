@@ -19,6 +19,8 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -27,7 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.PlatformUI;
-
+import  org.eclipse.ui.internal.wizards.datatransfer.TarFileExporter;
 /**
  *	Page 1 of the base resource export-to-archive Wizard.
  *
@@ -39,8 +41,13 @@ public class WizardArchiveFileResourceExportPage1 extends
     // widgets
     protected Button compressContentsCheckbox;
     
-    private Button zipFormatButton;
-    private Button targzFormatButton;
+    protected Button zipFormatButton;
+    protected Button tarFormatButton;
+    
+
+    protected Button uncompressTarButton;
+    protected Button gzipCompressButton;
+    protected Button bzip2CompressButton;
 
     // dialog store id constants
     private final static String STORE_DESTINATION_NAMES_ID = "WizardZipFileResourceExportPage1.STORE_DESTINATION_NAMES_ID"; //$NON-NLS-1$
@@ -49,6 +56,13 @@ public class WizardArchiveFileResourceExportPage1 extends
 
     private final static String STORE_COMPRESS_CONTENTS_ID = "WizardZipFileResourceExportPage1.STORE_COMPRESS_CONTENTS_ID"; //$NON-NLS-1$
 
+    private final static String STORE_ZIP_FORMAT_ID = "WizardZipFileResourceExportPage1.STORE_ZIP_FORMAT_ID";	//$NON-NLS-1$
+    
+    private final static String STORE_UNCOMPRESS_TAR_FORMAT_ID = "WizardZipFileResourceExportPage1.STORE_UNCOMPRESS_TAR_FORMAT_ID";	//$NON-NLS-1$
+    
+    private final static String STORE_GZIP_FORMAT_ID = "WizardZipFileResourceExportPage1.STORE_GZIP_FORMAT_ID"; //$NON-NLS-1$
+    
+    private final static String STORE_BZIP2_FORMAT_ID = "WizardZipFileResourceExportPage1.STORE_BZIP2_FORMAT_ID"; //$NON-NLS-1$
     /**
      *	Create an instance of this class. 
      *
@@ -87,16 +101,15 @@ public class WizardArchiveFileResourceExportPage1 extends
     	optionsGroup.setLayout(new GridLayout(2, true));
     	
     	Composite left = new Composite(optionsGroup, SWT.NONE);
-    	left.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, false));
+    	left.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
     	left.setLayout(new GridLayout(1, true));
-
         createFileFormatOptions(left, font);
         
-        // compress... checkbox
+        /*// compress... checkbox
         compressContentsCheckbox = new Button(left, SWT.CHECK
                 | SWT.LEFT);
         compressContentsCheckbox.setText(DataTransferMessages.ZipExport_compressContents);
-        compressContentsCheckbox.setFont(font);
+        compressContentsCheckbox.setFont(font);*/
 
         Composite right = new Composite(optionsGroup, SWT.NONE);
         right.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, false));
@@ -108,6 +121,7 @@ public class WizardArchiveFileResourceExportPage1 extends
         createDirectoryStructureButton.setSelection(true);
         createSelectionOnlyButton.setSelection(false);
         compressContentsCheckbox.setSelection(true);
+
     }
 
     /**
@@ -122,12 +136,98 @@ public class WizardArchiveFileResourceExportPage1 extends
         zipFormatButton.setText(DataTransferMessages.ArchiveExport_saveInZipFormat);
         zipFormatButton.setSelection(true);
         zipFormatButton.setFont(font);
+		zipFormatButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (((Button)e.widget).getSelection()) {
+					// activate Zip options
+					activateZipOptions();
+					setZipOption();
+					// try setting the correct file extension
+					setDestinationValue(getDestinationValue(true));
+				}
+			}
+		});
+        //create an indent
+        Button tmp= new Button(optionsGroup, SWT.CHECK);
+        int indent = tmp.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+        tmp.dispose();
+        // compress... checkbox
+        compressContentsCheckbox = new Button(optionsGroup, SWT.CHECK
+                | SWT.LEFT);
+        compressContentsCheckbox.setText(DataTransferMessages.ZipExport_compressContents);
+        compressContentsCheckbox.setFont(font);      
+        GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gridData.horizontalSpan = 2;
+		gridData.horizontalIndent = indent;
+        compressContentsCheckbox.setLayoutData(gridData);
 
         // create directory structure radios
-        targzFormatButton = new Button(optionsGroup, SWT.RADIO | SWT.LEFT);
-        targzFormatButton.setText(DataTransferMessages.ArchiveExport_saveInTarFormat);
-        targzFormatButton.setSelection(false);
-        targzFormatButton.setFont(font);
+        tarFormatButton = new Button(optionsGroup, SWT.RADIO | SWT.LEFT);
+        tarFormatButton.setText(DataTransferMessages.ArchiveExport_saveInTarFormat);
+        tarFormatButton.setSelection(false);
+        tarFormatButton.setFont(font);
+		tarFormatButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if(((Button)e.widget).getSelection()) {
+					// activate tar options
+					activateTarOptions();
+					setUncompressedTarOption();
+					// try setting the correct file extension
+					setDestinationValue(getDestinationValue(true));
+				}
+			}
+		});
+        
+        
+        //uncompressed tar format
+        uncompressTarButton = new Button(optionsGroup, SWT.RADIO | SWT.LEFT);
+        uncompressTarButton.setText(DataTransferMessages.WizardArchiveFileResourceExportPage_UncompressedTarFormat);
+        uncompressTarButton.setSelection(false);
+        uncompressTarButton.setFont(font);
+        uncompressTarButton.setLayoutData(gridData);
+        uncompressTarButton.addSelectionListener(new SelectionAdapter() {
+        	public void widgetSelected(SelectionEvent e) {
+        		if(((Button)e.widget).getSelection()) {
+        			//set uncompressed option
+        			setUncompressedTarOption();
+        			// try setting the correct file extension
+        			setDestinationValue(getDestinationValue(true));
+        		}
+        	}
+        });
+        //gzip format tar ball
+        gzipCompressButton = new Button(optionsGroup, SWT.RADIO | SWT.LEFT);
+        gzipCompressButton.setText(DataTransferMessages.WizardArchiveFileResourceExportPage_GzipCompressedTarFormat);
+        gzipCompressButton.setSelection(false);
+        gzipCompressButton.setFont(font);
+        gzipCompressButton.setLayoutData(gridData);
+        gzipCompressButton.addSelectionListener(new SelectionAdapter() {
+        	public void widgetSelected(SelectionEvent e) {
+        		if(((Button)e.widget).getSelection()) {
+        			//set gzip compress option
+        			setGzipTarOption();
+        			// try setting the correct file extension
+        			setDestinationValue(getDestinationValue(true));
+        		}
+        	}
+        });
+        
+        //bzip2 format tar ball
+        bzip2CompressButton = new Button(optionsGroup, SWT.RADIO | SWT.LEFT);
+        bzip2CompressButton.setText(DataTransferMessages.WizardArchiveFileResourceExportPage_Bzip2CompressedTarFormat);
+        bzip2CompressButton.setSelection(false);
+        bzip2CompressButton.setFont(font);
+        bzip2CompressButton.setLayoutData(gridData);
+        bzip2CompressButton.addSelectionListener(new SelectionAdapter() {
+        	public void widgetSelected(SelectionEvent e) {
+        		if(((Button)e.getSource()).getSelection()) {
+        			//set bzip2 compress option
+        			setBzipTarOption();
+        			// try setting the correct file extension
+        			setDestinationValue(getDestinationValue(true));
+        		}
+        	}
+        });
     }    
     
     /**
@@ -176,7 +276,7 @@ public class WizardArchiveFileResourceExportPage1 extends
      * both valid and able to be used.  Answer a boolean indicating validity.
      */
     protected boolean ensureTargetIsValid() {
-        String targetPath = getDestinationValue();
+        String targetPath = getDestinationValue(false);
 
         if (!ensureTargetDirectoryIsValid(targetPath)) {
 			return false;
@@ -197,7 +297,7 @@ public class WizardArchiveFileResourceExportPage1 extends
         op.setCreateLeadupStructure(createDirectoryStructureButton
                 .getSelection());
         op.setUseCompression(compressContentsCheckbox.getSelection());
-        op.setUseTarFormat(targzFormatButton.getSelection());
+        op.setUseTarFormat(tarFormatButton.getSelection());
 
         try {
             getContainer().run(true, true, op);
@@ -238,8 +338,24 @@ public class WizardArchiveFileResourceExportPage1 extends
         // about to invoke the operation so save our state
         saveWidgetValues();
 
-        return executeExportOperation(new ArchiveFileExportOperation(null,
-                resourcesToExport, getDestinationValue()));
+		// determine save format, if zip, use old ArchiveFileExportOperation
+		// constructor
+		// otherwise, tar format and call new ArchiveFileExportOperation
+		// constructor with format code from TarFileExporter
+        int tarCode = getTarExportCode();
+        ArchiveFileExportOperation operation = null;
+        if(tarCode != -1) { //tar is selected
+        	try {
+        	operation = new ArchiveFileExportOperation(null,
+                    resourcesToExport, getDestinationValue(true), tarCode);
+        	}catch(IllegalArgumentException iae) {
+        		//this should never happen
+        	}
+        }else { //zip is selected
+        	operation = new ArchiveFileExportOperation(null,
+                    resourcesToExport, getDestinationValue(true));
+        }
+        return executeExportOperation(operation);
     }
 
     /**
@@ -252,9 +368,10 @@ public class WizardArchiveFileResourceExportPage1 extends
     /**
      *	Answer the contents of self's destination specification widget.  If this
      *	value does not have a suffix then add it first.
+     *	@param radioActivated
      */
-    protected String getDestinationValue() {
-        String idealSuffix = getOutputSuffix();
+    protected String getDestinationValue(boolean radioActivated) {
+    	String idealSuffix = getOutputSuffix();
         String destinationText = super.getDestinationValue();
 
         // only append a suffix if the destination doesn't already have a . in 
@@ -265,17 +382,52 @@ public class WizardArchiveFileResourceExportPage1 extends
                 && !destinationText.endsWith(File.separator)) {
             int dotIndex = destinationText.lastIndexOf('.');
             if (dotIndex != -1) {
-                // the last path seperator index
+                //since the method is not called by radio button handler, we must determine the extension
+            	if(!radioActivated)
+            	{
+            		int extIndex = getCompressionExtensionIndex(destinationText);
+            		if(extIndex != -1)
+            			idealSuffix = destinationText.substring(extIndex);
+            	}
+            	// the last path seperator index
                 int pathSepIndex = destinationText.lastIndexOf(File.separator);
-                if (pathSepIndex != -1 && dotIndex < pathSepIndex) {
-                    destinationText += idealSuffix;
-                }
+                if (pathSepIndex != -1 /*&& dotIndex < pathSepIndex*/) {
+                    //detect if its one of the supported file extensions, if it is, replace the file extension
+                	//otherwise, append
+					int extIndex = getCompressionExtensionIndex(destinationText);
+					if(extIndex != -1)
+						destinationText = destinationText.substring(0, extIndex) + idealSuffix;
+					else
+						destinationText += idealSuffix;
+                } 
             } else {
                 destinationText += idealSuffix;
             }
         }
 
         return destinationText;
+    }
+    
+    /**
+     *  Returns the index of the beginning of the file extension, returns -1 if its not found.
+     *  @param in
+     *  @return int
+     */
+    protected int getCompressionExtensionIndex(String in)
+    {
+    	int index = -1;
+    	if ((in.endsWith(".tar"))	 			//$NON-NLS-1$
+				|| (in.endsWith(".zip"))		//$NON-NLS-1$
+				|| (in.endsWith(".tgz"))		//$NON-NLS-1$
+				|| (in.endsWith(".tbz"))		//$NON-NLS-1$
+				|| (in.endsWith(".tbz2"))) {	//$NON-NLS-1$
+    		index = in.lastIndexOf('.');
+    	} else if(in.endsWith(".tar.gz")) {	//$NON-NLS-1$
+			index = in.lastIndexOf(".tar.gz"); //$NON-NLS-1$
+    	} else if(in.endsWith(".tar.bz2")) {	//$NON-NLS-1$
+			index = in.lastIndexOf(".tar.bz2"); //$NON-NLS-1$
+		}
+    	return index;
     }
 
     /**
@@ -284,15 +436,17 @@ public class WizardArchiveFileResourceExportPage1 extends
      *	then it must include the leading period character.
      *
      */
-    protected String getOutputSuffix() {
-    	if(zipFormatButton.getSelection()) {
-        	return ".zip"; //$NON-NLS-1$
-    	} else if(compressContentsCheckbox.getSelection()) {
-    		return ".tar.gz"; //$NON-NLS-1$
-    	} else {
-    		return ".tar"; //$NON-NLS-1$
-    	}
-    }
+	protected String getOutputSuffix() {
+		if (zipFormatButton.getSelection()) {
+			return ".zip"; //$NON-NLS-1$
+		} else if (gzipCompressButton.getSelection()) {
+			return ".tar.gz"; //$NON-NLS-1$
+		} else if (bzip2CompressButton.getSelection()) {
+			return ".tar.bz2"; //$NON-NLS-1$
+		} else {
+			return ".tar"; //$NON-NLS-1$
+		}
+	}
 
     /**
      *	Open an appropriate destination browser so that the user can specify a source
@@ -300,9 +454,9 @@ public class WizardArchiveFileResourceExportPage1 extends
      */
     protected void handleDestinationBrowseButtonPressed() {
         FileDialog dialog = new FileDialog(getContainer().getShell(), SWT.SAVE | SWT.SHEET);
-        dialog.setFilterExtensions(new String[] { "*.zip;*.tar.gz;*.tar;*.tgz", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
+        dialog.setFilterExtensions(new String[] { "*.zip;*.tar.gz;*.tar;*.tar.bz2", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
         dialog.setText(DataTransferMessages.ArchiveExport_selectDestinationTitle);
-        String currentSourceString = getDestinationValue();
+        String currentSourceString = getDestinationValue(false);
         int lastSeparatorIndex = currentSourceString
                 .lastIndexOf(File.separator);
         if (lastSeparatorIndex != -1) {
@@ -331,14 +485,27 @@ public class WizardArchiveFileResourceExportPage1 extends
 				directoryNames = new String[0];
 			}
 
-            directoryNames = addToHistory(directoryNames, getDestinationValue());
-            settings.put(STORE_DESTINATION_NAMES_ID, directoryNames);
+			directoryNames = addToHistory(directoryNames,
+					getDestinationValue(false));
+			settings.put(STORE_DESTINATION_NAMES_ID, directoryNames);
 
-            settings.put(STORE_CREATE_STRUCTURE_ID,
-                    createDirectoryStructureButton.getSelection());
+			settings.put(STORE_CREATE_STRUCTURE_ID,
+					createDirectoryStructureButton.getSelection());
 
-            settings.put(STORE_COMPRESS_CONTENTS_ID, compressContentsCheckbox
-                    .getSelection());
+			settings.put(STORE_COMPRESS_CONTENTS_ID,
+					compressContentsCheckbox.getSelection());
+
+			settings.put(STORE_ZIP_FORMAT_ID, zipFormatButton.getSelection());
+
+			settings.put(STORE_UNCOMPRESS_TAR_FORMAT_ID,
+					uncompressTarButton.getSelection());
+
+			settings.put(STORE_GZIP_FORMAT_ID,
+					gzipCompressButton.getSelection());
+
+			settings.put(STORE_BZIP2_FORMAT_ID,
+					bzip2CompressButton.getSelection());
+             
         }
     }
 
@@ -367,8 +534,24 @@ public class WizardArchiveFileResourceExportPage1 extends
             createDirectoryStructureButton.setSelection(setStructure);
             createSelectionOnlyButton.setSelection(!setStructure);
 
-            compressContentsCheckbox.setSelection(settings
-                    .getBoolean(STORE_COMPRESS_CONTENTS_ID));
+            
+            
+            boolean zipFormat = settings.getBoolean(STORE_ZIP_FORMAT_ID);
+            
+			if (zipFormat) {
+				activateZipOptions();
+				setZipOption();
+				compressContentsCheckbox.setSelection(settings
+						.getBoolean(STORE_COMPRESS_CONTENTS_ID));
+			} else {
+				activateTarOptions();
+				uncompressTarButton.setSelection(settings
+						.getBoolean(STORE_UNCOMPRESS_TAR_FORMAT_ID));
+				gzipCompressButton.setSelection(settings
+						.getBoolean(STORE_GZIP_FORMAT_ID));
+				bzip2CompressButton.setSelection(settings
+						.getBoolean(STORE_BZIP2_FORMAT_ID));
+			}
         }
     }
 
@@ -384,21 +567,118 @@ public class WizardArchiveFileResourceExportPage1 extends
      *	widgets currently all contain valid values.
      */
     protected boolean validateDestinationGroup() {
-    	String destinationValue = getDestinationValue();
+    	String destinationValue = getDestinationValue(false);
     	if (destinationValue.endsWith(".tar")) { //$NON-NLS-1$
-    		compressContentsCheckbox.setSelection(false);
-    		targzFormatButton.setSelection(true);
-    		zipFormatButton.setSelection(false);
+    		//compressContentsCheckbox.setSelection(false);
+    		activateTarOptions();
+    		setUncompressedTarOption();
     	} else if (destinationValue.endsWith(".tar.gz") //$NON-NLS-1$
 				|| destinationValue.endsWith(".tgz")) { //$NON-NLS-1$
-    		compressContentsCheckbox.setSelection(true);
-    		targzFormatButton.setSelection(true);
-    		zipFormatButton.setSelection(false);
+    		//compressContentsCheckbox.setSelection(true);
+    		activateTarOptions();
+    		setGzipTarOption();
     	} else if (destinationValue.endsWith(".zip")) { //$NON-NLS-1$
-    		zipFormatButton.setSelection(true);
-    		targzFormatButton.setSelection(false);
+    		activateZipOptions();
+    		setZipOption();
+    	}else if((destinationValue.endsWith(".tar.bz2"))	//$NON-NLS-1$
+    			|| (destinationValue.endsWith(".tbz"))		//$NON-NLS-1$
+    			|| (destinationValue.endsWith(".tbz2"))){	//$NON-NLS-1$
+    		activateTarOptions();
+    		setBzipTarOption();
     	}
     	
     	return super.validateDestinationGroup();
     }
+    
+	/**
+	 * Configure the compression format radio buttons when uncompressed tar
+	 * format is selected.
+	 */
+	protected void setUncompressedTarOption() {
+		tarFormatButton.setSelection(true);
+		uncompressTarButton.setSelection(true);
+		gzipCompressButton.setSelection(false);
+		bzip2CompressButton.setSelection(false);
+		zipFormatButton.setSelection(false);
+	}
+
+	/**
+	 * Configure the compression format radio buttons when Gzip compressed tar
+	 * format is selected.
+	 */
+	protected void setGzipTarOption() {
+		tarFormatButton.setSelection(true);
+		uncompressTarButton.setSelection(false);
+		gzipCompressButton.setSelection(true);
+		bzip2CompressButton.setSelection(false);
+		zipFormatButton.setSelection(false);
+	}
+
+	/**
+	 * Configure the compression format radio buttons when Zip format is
+	 * selected.
+	 */
+	protected void setZipOption() {
+		tarFormatButton.setSelection(false);
+		uncompressTarButton.setSelection(false);
+		gzipCompressButton.setSelection(false);
+		bzip2CompressButton.setSelection(false);
+		zipFormatButton.setSelection(true);
+	}
+
+	/**
+	 * Configure the compression format radio buttons when Bzip2 compressed tar
+	 * format is selected.
+	 */
+	protected void setBzipTarOption() {
+		tarFormatButton.setSelection(true);
+		uncompressTarButton.setSelection(false);
+		gzipCompressButton.setSelection(false);
+		bzip2CompressButton.setSelection(true);
+		zipFormatButton.setSelection(false);
+	}
+	
+	/**
+	 *  Activate the Tar compression format options.
+	 */
+	protected void activateTarOptions()
+	{
+		 zipFormatButton.setSelection(false);
+		 compressContentsCheckbox.setEnabled(false);
+		 tarFormatButton.setSelection(true);   
+		 uncompressTarButton.setEnabled(true);
+		 gzipCompressButton.setEnabled(true);
+		 bzip2CompressButton.setEnabled(true);
+		 uncompressTarButton.setSelection(true);
+	}
+	
+	/**
+	 *  Activate the Zip compression format options.
+	 */
+	protected void activateZipOptions()
+	{
+		 zipFormatButton.setSelection(true);
+		 compressContentsCheckbox.setEnabled(true);
+		 tarFormatButton.setSelection(false);   
+		 uncompressTarButton.setEnabled(false);
+		 gzipCompressButton.setEnabled(false);
+		 bzip2CompressButton.setEnabled(false);
+	}
+	
+	/**
+	 * Returns the tar mode code to the caller, based on the radio buttons'
+	 * status.
+	 */
+	protected int getTarExportCode() {
+		int code = -1;
+		if (tarFormatButton.getSelection()) {
+			if (uncompressTarButton.getSelection())
+				code = TarFileExporter.UNCOMPRESSED;
+			else if (gzipCompressButton.getSelection())
+				code = TarFileExporter.GZIP;
+			else if (bzip2CompressButton.getSelection())
+				code = TarFileExporter.BZIP2;
+		}
+		return code;
+	}
 }

@@ -323,7 +323,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 
 	// constant from WizardArchiveFileResourceImportPage1
 	private static final String[] FILE_IMPORT_MASK = {
-			"*.jar;*.zip;*.tar;*.tar.gz;*.tgz", "*.*" }; //$NON-NLS-1$ //$NON-NLS-2$
+			"*.jar;*.zip;*.tar;*.tar.gz;*.tgz;*.tar.bz2;*.tbz;*.tbz2", "*.*" }; //$NON-NLS-1$ //$NON-NLS-2$
 
 	// The initial path to set
 	private String initialPath;

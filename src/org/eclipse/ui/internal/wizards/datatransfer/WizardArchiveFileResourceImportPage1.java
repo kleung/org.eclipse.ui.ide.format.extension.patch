@@ -49,7 +49,7 @@ public class WizardArchiveFileResourceImportPage1 extends
     ILeveledImportStructureProvider structureProvider;
 
     // constants
-    private static final String[] FILE_IMPORT_MASK = { "*.jar;*.zip;*.tar;*.tar.gz;*.tgz", "*.*" }; //$NON-NLS-1$ //$NON-NLS-2$
+    private static final String[] FILE_IMPORT_MASK = { "*.jar;*.zip;*.tar;*.tar.gz;*.tgz;*.tar.bz2;*.tbz;*.tbz2", "*.*" }; //$NON-NLS-1$ //$NON-NLS-2$
 
     // dialog store id constants
     private final static String STORE_SOURCE_NAMES_ID = "WizardZipFileResourceImportPage1.STORE_SOURCE_NAMES_ID"; //$NON-NLS-1$

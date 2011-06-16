@@ -101,7 +101,9 @@ public class DataTransferMessages extends NLS {
 	public static String WizardProjectsImportPage_projectsInWorkspace;
 	public static String WizardProjectsImportPage_noProjectsToImport;
 	public static String WizardProjectsImportPage_projectLabel;
-
+	public static String WizardArchiveFileResourceExportPage_UncompressedTarFormat;
+	public static String WizardArchiveFileResourceExportPage_GzipCompressedTarFormat;
+	public static String WizardArchiveFileResourceExportPage_Bzip2CompressedTarFormat;
 	// --- Export Wizards ---
 	public static String DataTransfer_export;
 
@@ -142,7 +144,8 @@ public class DataTransferMessages extends NLS {
 	public static String ArchiveExport_destinationEmpty;
 	public static String ArchiveExport_saveInZipFormat;
 	public static String ArchiveExport_saveInTarFormat;
-
+	public static String ArchiveFileExportOperation_unsupportedTarMode;
+	
 	public static String TarImport_invalid_tar_format;
 
 	static {

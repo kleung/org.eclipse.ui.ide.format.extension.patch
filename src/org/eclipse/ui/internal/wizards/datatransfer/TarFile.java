@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.zip.GZIPInputStream;
-
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 
 /**
  * Reads a .tar or .tar.gz archive file, providing an index enumeration
@@ -43,16 +43,32 @@ public class TarFile {
 	 */
 	public TarFile(File file) throws TarException, IOException {
 		this.file = file;
-
+		
 		InputStream in = new FileInputStream(file);
+		//boolean flag to signify whether continue testing file type or not
+		boolean fileTypeIdentified = false;
+		
 		// First, check if it's a GZIPInputStream.
 		try {
 			in = new GZIPInputStream(in);
+			fileTypeIdentified = true;
 		} catch(IOException e) {
 			//If it is not compressed we close
 			//the old one and recreate
 			in.close();
 			in = new FileInputStream(file);
+		}
+		// try bzip2, if it still fails, treat it as a simple uncompressed tar.
+		if (!fileTypeIdentified) {
+			try {
+				in = new BZip2CompressorInputStream(in);
+				fileTypeIdentified = true;
+			} catch (IOException e) {
+				// If it is not compressed we close
+				// the old one and recreate
+				in.close();
+				in = new FileInputStream(file);
+			}
 		}
 		try {
 			entryEnumerationStream = new TarInputStream(in);
@@ -125,14 +141,30 @@ public class TarFile {
 				internalEntryStream.close();
 			}
 			internalEntryStream = new FileInputStream(file);
+			boolean fileFormatIdentified = false;
 			// First, check if it's a GZIPInputStream.
 			try {
 				internalEntryStream = new GZIPInputStream(internalEntryStream);
+				fileFormatIdentified = true;
 			} catch(IOException e) {
 				//If it is not compressed we close
 				//the old one and recreate
 				internalEntryStream.close();
 				internalEntryStream = new FileInputStream(file);
+			}
+			// try bzip2, if it still fails, treat it as normal uncompressed tar
+			// file.
+			if (!fileFormatIdentified) {
+				try {
+					internalEntryStream = new BZip2CompressorInputStream(
+							internalEntryStream);
+					fileFormatIdentified = true;
+				} catch (IOException e) {
+					// If it is not compressed we close
+					// the old one and recreate
+					internalEntryStream.close();
+					internalEntryStream = new FileInputStream(file);
+				}
 			}
 			entryStream = new TarInputStream(internalEntryStream, entry) {
 				public void close() {

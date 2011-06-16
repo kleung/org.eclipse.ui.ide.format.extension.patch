@@ -55,6 +55,8 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
 
     private boolean createLeadupStructure = true;
 
+    private int tarMode = -1;//Initialize to -1 signifies that it should behave as if before modified (version 1.14)
+    
     /**
      *	Create an instance of this class.  Use this constructor if you wish to
      *	export specific resources without a common parent resource
@@ -104,6 +106,26 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
         this(res, filename);
         resourcesToExport = resources;
     }
+    
+	/**
+	 * Create an instance of this class. Use this constructor if you wish to
+	 * export specific resources with a common parent resource (affects
+	 * container directory creation) and wish to use bzip2 compression method.
+	 * 
+	 * @param res
+	 * @param resources
+	 * @param filename
+	 * @param compressMode
+	 * @throws IllegalArgumentException
+	 */
+	public ArchiveFileExportOperation(IResource res, List resources,
+			String filename, int compressMode) throws IllegalArgumentException {
+		this(res, resources, filename);
+		if ((compressMode < TarFileExporter.UNCOMPRESSED)
+				|| (compressMode > TarFileExporter.BZIP2))
+			throw new IllegalArgumentException(DataTransferMessages.ArchiveFileExportOperation_unsupportedTarMode);
+		tarMode = compressMode;
+	}
 
     /**
      * Add a new entry to the error table with the passed information
@@ -262,18 +284,27 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
                 null);
     }
 
-    /**
-     *	Initialize this operation
-     *
-     *	@exception java.io.IOException
-     */
-    protected void initialize() throws IOException {
-    	if(useTarFormat) {
-    		exporter = new TarFileExporter(destinationFilename, useCompression);
-    	} else {
-        	exporter = new ZipFileExporter(destinationFilename, useCompression);
-    	}
-    }
+	/**
+	 * Initialize this operation
+	 * 
+	 * @exception java.io.IOException
+	 */
+	protected void initialize() throws IOException {
+		if (useTarFormat) {
+			if (tarMode != -1) {
+				try {
+					exporter = new TarFileExporter(destinationFilename, tarMode);
+				} catch (IllegalArgumentException iae) {
+					// Should not happen because it is caught by the
+					// constructor.
+				}
+			} else
+				exporter = new TarFileExporter(destinationFilename,
+						useCompression);
+		} else {
+			exporter = new ZipFileExporter(destinationFilename, useCompression);
+		}
+	}
 
     /**
      *  Answer a boolean indicating whether the passed child is a descendent
