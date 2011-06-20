@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Red Hat, Inc - added bzip2 support
  *******************************************************************************/
 package org.eclipse.ui.internal.wizards.datatransfer;
 
@@ -37,10 +38,11 @@ public class TarFileExporter implements IFileExporter {
     private GZIPOutputStream gzipOutputStream;
     private BZip2CompressorOutputStream bzip2OutputStream;
     
+    //format codes
     public static final int UNCOMPRESSED = 0;
     public static final int GZIP = 1;
     public static final int BZIP2 = 2;
-    //public static final int XZ = 3;
+
 
     /**
      *	Create an instance of this class.
@@ -90,16 +92,15 @@ public class TarFileExporter implements IFileExporter {
 			outputStream = new TarOutputStream(new BufferedOutputStream(
 					bzip2OutputStream));
 			break;
-		// case XZ
 		default:
-			throw new IllegalArgumentException();// TO DO: DEFINE MESSAGE IN THE
-													// UTILITY CLASS!
+			throw new IllegalArgumentException();
 		}
+		//additional format can be added to the above switch statement
 	}
     
     /**
      *	Do all required cleanup now that we're finished with the
-     *	currently-open .tar.gz
+     *	currently-open .tar.gz/.tar.bz2
      *
      *	@exception java.io.IOException
      */
@@ -111,6 +112,7 @@ public class TarFileExporter implements IFileExporter {
         {
         	bzip2OutputStream.close();
         }
+        //additional format can be added to the above if statement block
     }
 
     /**

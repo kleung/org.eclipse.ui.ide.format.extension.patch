@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Red Hat, Inc - extensive changes to allow importing of Archive Files
+ *     				  added bzip2 support
  *     Philippe Ombredanne (pombredanne@nexb.com)
  *     		- Bug 101180 [Import/Export] Import Existing Project into Workspace default widget is back button , should be text field
  *     Martin Oberhuber (martin.oberhuber@windriver.com)

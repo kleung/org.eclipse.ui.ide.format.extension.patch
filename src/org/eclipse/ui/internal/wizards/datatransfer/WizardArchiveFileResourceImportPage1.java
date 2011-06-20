@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Red Hat, Inc - Extracted several methods to ArchiveFileManipulations
+ *     				- Added bzip2 format support
  *     Oliver Schaefer <oliver.schaefer@mbtech-services.com> - Fix for
  *     		 Bug 221649 [Import/Export] ZipFileImportWizard has no option to change the FILE_IMPORT_MASK
  *******************************************************************************/
@@ -48,7 +49,7 @@ public class WizardArchiveFileResourceImportPage1 extends
 
     ILeveledImportStructureProvider structureProvider;
 
-    // constants
+    // constants with bzip2 support
     private static final String[] FILE_IMPORT_MASK = { "*.jar;*.zip;*.tar;*.tar.gz;*.tgz;*.tar.bz2;*.tbz;*.tbz2", "*.*" }; //$NON-NLS-1$ //$NON-NLS-2$
 
     // dialog store id constants

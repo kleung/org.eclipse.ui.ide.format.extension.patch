@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Red Hat, Inc - added bzip2 format support
  *******************************************************************************/
 package org.eclipse.ui.internal.wizards.datatransfer;
 
@@ -285,7 +286,8 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
     }
 
 	/**
-	 * Initialize this operation
+	 * Initialize this operation, if tarMode is not -1, use the new constructor of TarFileExporter to use bzip2 format, otherwise,
+	 * the old TarFileExporter constructor is called.
 	 * 
 	 * @exception java.io.IOException
 	 */

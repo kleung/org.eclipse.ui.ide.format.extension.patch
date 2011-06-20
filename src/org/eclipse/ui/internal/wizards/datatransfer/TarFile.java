@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Corporation - initial API and implementation
+ * Red Hat, Inc - added bzip2 support
  * Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 243347 TarFile should not throw NPE in finalize()
  *******************************************************************************/
 package org.eclipse.ui.internal.wizards.datatransfer;
@@ -70,6 +71,9 @@ public class TarFile {
 				in = new FileInputStream(file);
 			}
 		}
+		//additional format can be added here in a similar fashion as the previous if statement block.
+		
+		//create TarInputStream
 		try {
 			entryEnumerationStream = new TarInputStream(in);
 		} catch (TarException ex) {
@@ -166,6 +170,9 @@ public class TarFile {
 					internalEntryStream = new FileInputStream(file);
 				}
 			}
+			// new format can be added here in a similar fashion as the previous if statement block.
+			
+			//create TarInputStream
 			entryStream = new TarInputStream(internalEntryStream, entry) {
 				public void close() {
 					// Ignore close() since we want to reuse the stream.

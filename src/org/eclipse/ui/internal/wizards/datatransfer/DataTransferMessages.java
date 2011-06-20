@@ -8,7 +8,10 @@
  * Contributors:
  * IBM - Initial API and implementation
  * Red Hat, Inc - WizardProjectsImportPage[_ArchiveSelectTitle,
- * 										   _SelectArchiveDialogTitle]
+ * 										   _SelectArchiveDialogTitle,
+ * 										   _UncompressedTarFormat,
+ * 										   _GzipCompressedTarFormat,
+ * 										   _Bzip2CompressedTarFormat]
  *******************************************************************************/
 package org.eclipse.ui.internal.wizards.datatransfer;
 
