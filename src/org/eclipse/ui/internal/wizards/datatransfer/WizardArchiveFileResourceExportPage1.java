@@ -395,7 +395,7 @@ public class WizardArchiveFileResourceExportPage1 extends
             	}
             	// the last path seperator index
                 int pathSepIndex = destinationText.lastIndexOf(File.separator);
-                if (pathSepIndex != -1 /*&& dotIndex < pathSepIndex*/) {
+                if (/*pathSepIndex != -1 && */dotIndex > pathSepIndex) {
                     //detect if its one of the supported file extensions, if it is, replace the file extension
                 	//otherwise, append
 					int extIndex = getCompressionExtensionIndex(destinationText);
