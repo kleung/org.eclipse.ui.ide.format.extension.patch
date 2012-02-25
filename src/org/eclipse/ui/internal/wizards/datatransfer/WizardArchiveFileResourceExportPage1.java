@@ -49,7 +49,7 @@ public class WizardArchiveFileResourceExportPage1 extends
     protected Button uncompressTarButton;
     protected Button gzipCompressButton;
     protected Button bzip2CompressButton;
-
+    protected Button xzCompressButton;
     // dialog store id constants
     private final static String STORE_DESTINATION_NAMES_ID = "WizardZipFileResourceExportPage1.STORE_DESTINATION_NAMES_ID"; //$NON-NLS-1$
 
@@ -64,6 +64,8 @@ public class WizardArchiveFileResourceExportPage1 extends
     private final static String STORE_GZIP_FORMAT_ID = "WizardZipFileResourceExportPage1.STORE_GZIP_FORMAT_ID"; //$NON-NLS-1$
     
     private final static String STORE_BZIP2_FORMAT_ID = "WizardZipFileResourceExportPage1.STORE_BZIP2_FORMAT_ID"; //$NON-NLS-1$
+    
+    private final static String STORE_XZ_FORMAT_ID = "WizardZipFileResourceExportPage1.STORE_XZ_FORMAT_ID";//$NON-NLS-1$
     /**
      *	Create an instance of this class. 
      *
@@ -232,6 +234,21 @@ public class WizardArchiveFileResourceExportPage1 extends
         });
         
         //additional format can be added in a similar fashion as the previous code blocks
+        xzCompressButton = new Button(optionsGroup, SWT.RADIO | SWT.LEFT);
+        xzCompressButton.setText(DataTransferMessages.WizardArchiveFileResourceExportPage_XZCompressedTarFormat);
+        xzCompressButton.setSelection(false);
+        xzCompressButton.setFont(font);
+        xzCompressButton.setLayoutData(gridData);
+        xzCompressButton.addSelectionListener(new SelectionAdapter() {
+        	public void widgetSelected(SelectionEvent e) {
+        		if(((Button)e.getSource()).getSelection()) {
+        			setXZTarOption();
+        			// try setting the correct file extension
+        			setDestinationValue(getDestinationValue(true));
+        		}
+        	}
+        });
+        
     }    
     
     /**
@@ -424,12 +441,15 @@ public class WizardArchiveFileResourceExportPage1 extends
 				|| (in.endsWith(".zip"))		//$NON-NLS-1$
 				|| (in.endsWith(".tgz"))		//$NON-NLS-1$
 				|| (in.endsWith(".tbz"))		//$NON-NLS-1$
-				|| (in.endsWith(".tbz2"))) {	//$NON-NLS-1$
+				|| (in.endsWith(".tbz2"))		//$NON-NLS-1$
+				|| (in.endsWith(".txz"))) {	//$NON-NLS-1$
     		index = in.lastIndexOf('.');
     	} else if(in.endsWith(".tar.gz")) {	//$NON-NLS-1$
 			index = in.lastIndexOf(".tar.gz"); //$NON-NLS-1$
     	} else if(in.endsWith(".tar.bz2")) {	//$NON-NLS-1$
 			index = in.lastIndexOf(".tar.bz2"); //$NON-NLS-1$
+		} else if(in.endsWith(".tar.xz")) {	//$NON-NLS-1$
+			index = in.lastIndexOf(".tar.xz"); //$NON-NLS-1$
 		}
     	//additional format can be added by adding code block in similar fashion as the above if statement blocks
     	return index;
@@ -448,6 +468,8 @@ public class WizardArchiveFileResourceExportPage1 extends
 			return ".tar.gz"; //$NON-NLS-1$
 		} else if (bzip2CompressButton.getSelection()) {
 			return ".tar.bz2"; //$NON-NLS-1$
+		} else if (xzCompressButton.getSelection()) {
+			return (".tar.xz"); //$NON-NLS-1$
 		} else {
 			return ".tar"; //$NON-NLS-1$
 		}
@@ -461,7 +483,7 @@ public class WizardArchiveFileResourceExportPage1 extends
     protected void handleDestinationBrowseButtonPressed() {
         FileDialog dialog = new FileDialog(getContainer().getShell(), SWT.SAVE | SWT.SHEET);
         //additional format can be added to the following file filter string array
-        dialog.setFilterExtensions(new String[] { "*.zip;*.tar.gz;*.tar;*.tar.bz2", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
+        dialog.setFilterExtensions(new String[] { "*.zip;*.tar.gz;*.tar;*.tar.bz2;*.tar.xz", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
         dialog.setText(DataTransferMessages.ArchiveExport_selectDestinationTitle);
         String currentSourceString = getDestinationValue(false);
         int lastSeparatorIndex = currentSourceString
@@ -513,6 +535,8 @@ public class WizardArchiveFileResourceExportPage1 extends
 			settings.put(STORE_BZIP2_FORMAT_ID,
 					bzip2CompressButton.getSelection());
             //additional format can be added here
+			settings.put(STORE_XZ_FORMAT_ID,
+					xzCompressButton.getSelection());
         }
     }
 
@@ -558,6 +582,8 @@ public class WizardArchiveFileResourceExportPage1 extends
 						.getBoolean(STORE_GZIP_FORMAT_ID));
 				bzip2CompressButton.setSelection(settings
 						.getBoolean(STORE_BZIP2_FORMAT_ID));
+				xzCompressButton.setSelection(settings
+						.getBoolean(STORE_XZ_FORMAT_ID));
 			}
         }
     }
@@ -594,6 +620,11 @@ public class WizardArchiveFileResourceExportPage1 extends
     		setBzipTarOption();
     	}
     	//additional format can be added by adding code block in similar fashion as the above if statement blocks
+    	else if((destinationValue.endsWith(".tar.xz"))	//$NON-NLS-1$
+    			|| (destinationValue.endsWith(".txz"))) {	//$NON-NLS-1$
+    		activateTarOptions();
+    		setXZTarOption();
+    	}
     	return super.validateDestinationGroup();
     }
     
@@ -607,6 +638,7 @@ public class WizardArchiveFileResourceExportPage1 extends
 		uncompressTarButton.setSelection(true);
 		gzipCompressButton.setSelection(false);
 		bzip2CompressButton.setSelection(false);
+		xzCompressButton.setSelection(false);
 		zipFormatButton.setSelection(false);
 	}
 
@@ -620,6 +652,7 @@ public class WizardArchiveFileResourceExportPage1 extends
 		uncompressTarButton.setSelection(false);
 		gzipCompressButton.setSelection(true);
 		bzip2CompressButton.setSelection(false);
+		xzCompressButton.setSelection(false);
 		zipFormatButton.setSelection(false);
 	}
 
@@ -633,6 +666,7 @@ public class WizardArchiveFileResourceExportPage1 extends
 		uncompressTarButton.setSelection(false);
 		gzipCompressButton.setSelection(false);
 		bzip2CompressButton.setSelection(false);
+		xzCompressButton.setSelection(false);
 		zipFormatButton.setSelection(true);
 	}
 
@@ -646,9 +680,23 @@ public class WizardArchiveFileResourceExportPage1 extends
 		uncompressTarButton.setSelection(false);
 		gzipCompressButton.setSelection(false);
 		bzip2CompressButton.setSelection(true);
+		xzCompressButton.setSelection(false);
 		zipFormatButton.setSelection(false);
 	}
 	
+	/**
+	 * Configure the compression format radio buttons when XZ compressed tar
+	 * format is selected.
+	 */
+	protected void setXZTarOption() {
+		//radio button event handling, additional format can be added below
+		tarFormatButton.setSelection(true);
+		uncompressTarButton.setSelection(false);
+		gzipCompressButton.setSelection(false);
+		bzip2CompressButton.setSelection(false);
+		xzCompressButton.setSelection(true);
+		zipFormatButton.setSelection(false);
+	}
 	/**
 	 * Activate the Tar compression format options.
 	 */
@@ -689,8 +737,11 @@ public class WizardArchiveFileResourceExportPage1 extends
 				code = TarFileExporter.GZIP;
 			else if (bzip2CompressButton.getSelection())
 				code = TarFileExporter.BZIP2;
+			//additional format can be added by adding code block in similar fashion as the above if statement blocks
+			else if (xzCompressButton.getSelection())
+				code = TarFileExporter.XZ;
 		}
-		//additional format can be added by adding code block in similar fashion as the above if statement blocks
+		
 		return code;
 	}
 }

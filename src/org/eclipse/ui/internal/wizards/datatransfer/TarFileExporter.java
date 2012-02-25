@@ -25,7 +25,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
-
+import org.tukaani.xz.XZOutputStream;
+import org.tukaani.xz.LZMA2Options;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 
 /**
@@ -37,12 +38,12 @@ public class TarFileExporter implements IFileExporter {
     private TarOutputStream outputStream;
     private GZIPOutputStream gzipOutputStream;
     private BZip2CompressorOutputStream bzip2OutputStream;
-    
+    private XZOutputStream xzOutputStream;
     //format codes
     public static final int UNCOMPRESSED = 0;
     public static final int GZIP = 1;
     public static final int BZIP2 = 2;
-
+    public static final int XZ = 3;
 
     /**
      *	Create an instance of this class.
@@ -92,10 +93,15 @@ public class TarFileExporter implements IFileExporter {
 			outputStream = new TarOutputStream(new BufferedOutputStream(
 					bzip2OutputStream));
 			break;
+		//additional format can be added to the above switch statement
+		case XZ:
+			xzOutputStream = new XZOutputStream(new FileOutputStream(filename), new LZMA2Options());
+			outputStream = new TarOutputStream(new BufferedOutputStream(xzOutputStream));
+			break;
 		default:
 			throw new IllegalArgumentException();
 		}
-		//additional format can be added to the above switch statement
+		
 	}
     
     /**
@@ -113,6 +119,10 @@ public class TarFileExporter implements IFileExporter {
         	bzip2OutputStream.close();
         }
         //additional format can be added to the above if statement block
+        else if(xzOutputStream != null)
+        {
+        	xzOutputStream.close();
+        }
     }
 
     /**

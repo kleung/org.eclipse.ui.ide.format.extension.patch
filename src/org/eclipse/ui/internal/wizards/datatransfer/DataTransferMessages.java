@@ -107,6 +107,7 @@ public class DataTransferMessages extends NLS {
 	public static String WizardArchiveFileResourceExportPage_UncompressedTarFormat;
 	public static String WizardArchiveFileResourceExportPage_GzipCompressedTarFormat;
 	public static String WizardArchiveFileResourceExportPage_Bzip2CompressedTarFormat;
+	public static String WizardArchiveFileResourceExportPage_XZCompressedTarFormat;
 	// --- Export Wizards ---
 	public static String DataTransfer_export;
 

@@ -123,7 +123,7 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
 			String filename, int compressMode) throws IllegalArgumentException {
 		this(res, resources, filename);
 		if ((compressMode < TarFileExporter.UNCOMPRESSED)
-				|| (compressMode > TarFileExporter.BZIP2))
+				|| (compressMode > TarFileExporter.XZ))
 			throw new IllegalArgumentException(DataTransferMessages.ArchiveFileExportOperation_unsupportedTarMode);
 		tarMode = compressMode;
 	}
